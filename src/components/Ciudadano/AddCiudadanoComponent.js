@@ -156,7 +156,7 @@ export const AddCiudadanoComponent = () => {
                                 <button type="submit" className="btn btn-primary mb-2">
                                     {id ? 'Actualizar' : 'Registrar'}
                                 </button>
-                                <Link to="/ciudadanos" className='btn btn-danger mb-2'>Cancelar</Link>
+                                <Link to="/ciudadano" className='btn btn-danger mb-2'>Cancelar</Link>
                             </div>
 
                         </form>
