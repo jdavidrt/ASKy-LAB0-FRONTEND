@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AddCiudadanoComponent from './components/Ciudadano/AddCiudadanoComponent';
 import AddViviendaComponent from './components/Vivienda/AddViviendaComponent';
 import AddMunicipioComponent from './components/Municipio/AddMunicipioComponent';
+import HomeComponent from './components/HomeComponent';
 
 function App() {
 
@@ -18,7 +19,8 @@ function App() {
         <HeaderComponent />
         <div className='container'>
           <Routes>
-            <Route exact path='/' element={<ListCiudadanosComponent />}></Route>
+            <Route exact path='/' element={<HomeComponent />}></Route>
+            <Route path='/home' element={<HomeComponent />}></Route>
             <Route path='/ciudadano' element={<ListCiudadanosComponent />}></Route>
             <Route path='/add-ciudadano' element={<AddCiudadanoComponent />}></Route>
             <Route path='/vivienda' element={<ListViviendaComponent />}></Route>
