@@ -49,11 +49,11 @@ function App() {
             <Route path='/add-cdf' element={<AddCDFComponent />} />
 
             {/* Gobernador */}
-            <Route path='/gobernador' element={<ListGobernadorComponent />} />
+            <Route path='/gobernadore' element={<ListGobernadorComponent />} />
             <Route path='/add-gobernador' element={<AddGobernadorComponent />} />
 
             {/* Posesión */}
-            <Route path='/posesion' element={<ListPosesionComponent />} />
+            <Route path='/posesiones' element={<ListPosesionComponent />} />
             <Route path='/add-posesion' element={<AddPosesionComponent />} />
           </Routes>
         </div>
