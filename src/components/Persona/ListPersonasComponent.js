@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import {
     Button,
     Table,
@@ -14,15 +14,16 @@ import {
     Typography,
 } from '@mui/material';
 
-const ListCiudadanosComponent = () => {
-    const [ciudadanos, setCiudadanos] = useState([]);
+const ListPersonasComponent = () => {
+    const [personas, setpersonas] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filteredCiudadanos, setFilteredCiudadanos] = useState([]);
+    const [filteredpersonas, setFilteredpersonas] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
-    const ejemploCiudadanos = [
+    const ejemplopersonas = [
         { id: 1, nombre: 'Juan', apellido: 'Perez', tipoDocumento: 'CC', numeroDocumento: '123456789', fechaNacimiento: new Date(1990, 5, 15), sexo: 'M', telefono: '3101234567' },
         { id: 2, nombre: 'Maria', apellido: 'Gomez', tipoDocumento: 'CC', numeroDocumento: '987654321', fechaNacimiento: new Date(1985, 10, 20), sexo: 'F', telefono: '3207654321' },
         { id: 3, nombre: 'Carlos', apellido: 'Lopez', tipoDocumento: 'TI', numeroDocumento: '1122334455', fechaNacimiento: new Date(2000, 3, 10), sexo: 'M', telefono: '3112345678' },
@@ -36,21 +37,21 @@ const ListCiudadanosComponent = () => {
     ];
 
     useEffect(() => {
-        setCiudadanos(ejemploCiudadanos);
-        setFilteredCiudadanos(ejemploCiudadanos); // Inicializar la lista filtrada
+        setpersonas(ejemplopersonas);
+        setFilteredpersonas(ejemplopersonas); // Inicializar la lista filtrada
     }, []);
 
     // Manejar búsqueda
     const handleSearch = (e) => {
         const term = e.target.value.toLowerCase();
         setSearchTerm(term);
-        setFilteredCiudadanos(
-            ciudadanos.filter(
-                (ciudadano) =>
-                    ciudadano.nombre.toLowerCase().includes(term) ||
-                    ciudadano.apellido.toLowerCase().includes(term) ||
-                    ciudadano.numeroDocumento.includes(term) ||
-                    ciudadano.telefono.includes(term)
+        setFilteredpersonas(
+            personas.filter(
+                (persona) =>
+                    persona.nombre.toLowerCase().includes(term) ||
+                    persona.apellido.toLowerCase().includes(term) ||
+                    persona.numeroDocumento.includes(term) ||
+                    persona.telefono.includes(term)
             )
         );
         setPage(0); // Reiniciar la página al buscar
@@ -69,7 +70,7 @@ const ListCiudadanosComponent = () => {
 
     return (
         <div className="container">
-            <h2 className="text-center">Lista de Ciudadanos</h2>
+            <h2 className="text-center">Lista de personas</h2>
             <div style={{ marginBottom: '20px' }}>
                 <TextField
                     label="Buscar"
@@ -82,9 +83,9 @@ const ListCiudadanosComponent = () => {
                     Puedes buscar por <b>nombre</b>, <b>apellido</b>, <b>número de documento</b> o <b>teléfono</b>.
                 </Typography>         
             </div>
-            <Link to="/add-ciudadano" style={{ textDecoration: 'none' }}>
+            <Link to="/add-persona" style={{ textDecoration: 'none' }}>
                     <Button variant="contained" color="primary">
-                        Agregar Ciudadano
+                        Agregar persona
                     </Button>
                 </Link>
             <TableContainer component={Paper}>
@@ -103,25 +104,25 @@ const ListCiudadanosComponent = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {filteredCiudadanos
+                        {filteredpersonas
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((ciudadano) => (
-                                <TableRow key={ciudadano.id}>
-                                    <TableCell>{ciudadano.id}</TableCell>
-                                    <TableCell>{ciudadano.nombre}</TableCell>
-                                    <TableCell>{ciudadano.apellido}</TableCell>
-                                    <TableCell>{ciudadano.tipoDocumento}</TableCell>
-                                    <TableCell>{ciudadano.numeroDocumento}</TableCell>
-                                    <TableCell>{ciudadano.fechaNacimiento.toLocaleDateString()}</TableCell>
-                                    <TableCell>{ciudadano.sexo}</TableCell>
-                                    <TableCell>{ciudadano.telefono}</TableCell>
+                            .map((persona) => (
+                                <TableRow key={persona.id}>
+                                    <TableCell>{persona.id}</TableCell>
+                                    <TableCell>{persona.nombre}</TableCell>
+                                    <TableCell>{persona.apellido}</TableCell>
+                                    <TableCell>{persona.tipoDocumento}</TableCell>
+                                    <TableCell>{persona.numeroDocumento}</TableCell>
+                                    <TableCell>{persona.fechaNacimiento.toLocaleDateString()}</TableCell>
+                                    <TableCell>{persona.sexo}</TableCell>
+                                    <TableCell>{persona.telefono}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outlined"
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar ciudadano con ID: ${ciudadano.id}`)}
+                                            onClick={() => navigate(`/edit-persona/${persona.id}`)}
                                         >
                                             Editar
                                         </Button>
@@ -130,7 +131,7 @@ const ListCiudadanosComponent = () => {
                                             color="secondary"
                                             size="small"
                                             onClick={() =>
-                                                setCiudadanos(ciudadanos.filter((c) => c.id !== ciudadano.id))
+                                                setpersonas(personas.filter((c) => c.id !== persona.id))
                                             }
                                         >
                                             Eliminar
@@ -143,7 +144,7 @@ const ListCiudadanosComponent = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 15]}
                     component="div"
-                    count={filteredCiudadanos.length}
+                    count={filteredpersonas.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -154,4 +155,4 @@ const ListCiudadanosComponent = () => {
     );
 };
 
-export default ListCiudadanosComponent;
+export default ListPersonasComponent;

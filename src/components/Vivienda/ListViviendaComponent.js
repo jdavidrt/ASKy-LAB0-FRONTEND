@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import {
     Button,
     Table,
@@ -20,6 +20,7 @@ const ListViviendasComponent = () => {
     const [filteredViviendas, setFilteredViviendas] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
     const ejemploViviendas = [
@@ -108,7 +109,7 @@ const ListViviendasComponent = () => {
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar vivienda con ID: ${vivienda.id}`)}
+                                            onClick={() => navigate(`/edit-vivienda/${vivienda.id}`)}
                                         >
                                             Editar
                                         </Button>
