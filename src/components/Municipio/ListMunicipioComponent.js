@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Button,
     Table,
@@ -19,7 +19,8 @@ const ListMunicipiosComponent = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredMunicipios, setFilteredMunicipios] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
     const ejemploMunicipios = [
@@ -102,7 +103,7 @@ const ListMunicipiosComponent = () => {
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar municipio con ID: ${municipio.id}`)}
+                                            onClick={() => navigate(`/edit-municipio/${municipio.id}`)}
                                         >
                                             Editar
                                         </Button>

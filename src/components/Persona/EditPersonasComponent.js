@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Typography, Paper, TextField, MenuItem } from '@mui/material';
 import PersonaService from '../../services/PersonaService';
 
-const AddPersonaComponent = () => {
+const EditPersonaComponent = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
 
     // Estado inicial para la persona
@@ -31,6 +32,17 @@ const AddPersonaComponent = () => {
         { value: 'F', label: 'Femenino' }
     ];
 
+    // Cargar la persona por su ID al iniciar el componente
+    useEffect(() => {
+        PersonaService.getPersonaById(id)
+            .then((response) => {
+                setPersona(response.data); 
+            })
+            .catch((error) => {
+                console.error('Error al obtener la persona', error);
+            });
+    }, [id]);
+
     // Validar los datos antes de enviar
     const validate = () => {
         const newErrors = {};
@@ -40,7 +52,7 @@ const AddPersonaComponent = () => {
             newErrors.apellido = 'El apellido solo puede contener letras';
         }
 
-        // Validar número de documento solo números
+        // Validar cedula solo números
         if (!/^\d*$/.test(persona.numeroDocumento)) {
             newErrors.numeroDocumento = 'El número de documento solo puede contener números';
         }
@@ -69,18 +81,16 @@ const AddPersonaComponent = () => {
         setErrors({ ...errors, [name]: '' });
     };
 
-    // Manejar el registro de la persona
+    // Manejar la actualización de la persona
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            PersonaService.createPersona(persona)
+            PersonaService.createPersona(persona) // Usamos createPersona cambiar por put cuando exista el servicio
                 .then(() => {
-                    alert('Persona registrada correctamente');
-                    navigate('/persona');
+                    navigate('/persona'); 
                 })
                 .catch((error) => {
-                    console.error('Error al registrar la persona', error);
-                    alert('Hubo un error al registrar la persona');
+                    console.error('Error al actualizar la persona', error);
                 });
         }
     };
@@ -88,7 +98,7 @@ const AddPersonaComponent = () => {
     return (
         <Container component={Paper} style={{ padding: '20px', marginTop: '20px' }}>
             <Typography variant="h4" gutterBottom>
-                Registrar Persona
+                Editar Persona
             </Typography>
             <form onSubmit={handleSubmit}>
                 <TextField
@@ -180,7 +190,7 @@ const AddPersonaComponent = () => {
                     margin="normal"
                 />
                 <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
-                    Registrar
+                    Guardar
                 </Button>
                 <Button
                     variant="outlined"
@@ -195,4 +205,4 @@ const AddPersonaComponent = () => {
     );
 };
 
-export default AddPersonaComponent;
+export default EditPersonaComponent;

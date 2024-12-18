@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import {
     Button,
     Table,
@@ -19,7 +19,8 @@ const ListPersonasComponent = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredpersonas, setFilteredpersonas] = useState([]);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
     const ejemplopersonas = [
@@ -121,7 +122,7 @@ const ListPersonasComponent = () => {
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar persona con ID: ${persona.id}`)}
+                                            onClick={() => navigate(`/edit-persona/${persona.id}`)}
                                         >
                                             Editar
                                         </Button>
