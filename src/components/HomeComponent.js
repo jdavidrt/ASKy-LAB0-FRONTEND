@@ -12,7 +12,7 @@ const HomeComponent = () => {
             <Grid container spacing={4} justifyContent="center">
                 {/* Botón Personas */}
                 <Grid item>
-                    <Link to="/ciudadano" style={{ textDecoration: 'none' }}>
+                    <Link to="/persona" style={{ textDecoration: 'none' }}>
                         <Button
                             variant="contained"
                             color="primary"

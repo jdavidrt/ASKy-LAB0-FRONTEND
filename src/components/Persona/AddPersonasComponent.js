@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-export const AddCiudadanoComponent = () => {
+export const AddPersonaComponent = () => {
     const [nombre, setNombre] = useState("");
     const [apellido, setApellido] = useState("");
     const [tipoDocumento, setTipoDocumento] = useState("");
@@ -14,8 +14,8 @@ export const AddCiudadanoComponent = () => {
 
     useEffect(() => {
         if (id) {
-            // Simulando obtención de datos del ciudadano para edición
-            const ejemploCiudadano = {
+            // Simulando obtención de datos del persona para edición
+            const ejemplopersona = {
                 id: 1,
                 nombre: 'Juan',
                 apellido: 'Perez',
@@ -26,20 +26,20 @@ export const AddCiudadanoComponent = () => {
                 telefono: '3101234567'
             };
 
-            setNombre(ejemploCiudadano.nombre);
-            setApellido(ejemploCiudadano.apellido);
-            setTipoDocumento(ejemploCiudadano.tipoDocumento);
-            setNumeroDocumento(ejemploCiudadano.numeroDocumento);
-            setFechaNacimiento(ejemploCiudadano.fechaNacimiento);
-            setSexo(ejemploCiudadano.sexo);
-            setTelefono(ejemploCiudadano.telefono);
+            setNombre(ejemplopersona.nombre);
+            setApellido(ejemplopersona.apellido);
+            setTipoDocumento(ejemplopersona.tipoDocumento);
+            setNumeroDocumento(ejemplopersona.numeroDocumento);
+            setFechaNacimiento(ejemplopersona.fechaNacimiento);
+            setSexo(ejemplopersona.sexo);
+            setTelefono(ejemplopersona.telefono);
         }
     }, [id]);
 
-    const saveCiudadano = (e) => {
+    const savepersona = (e) => {
         e.preventDefault();
 
-        const ciudadano = {
+        const persona = {
             id: id ? parseInt(id) : null,
             nombre,
             apellido,
@@ -51,17 +51,17 @@ export const AddCiudadanoComponent = () => {
         };
 
         if (id) {
-            console.log("Actualizando ciudadano:", ciudadano);
-            alert("Ciudadano actualizado correctamente");
+            console.log("Actualizando persona:", persona);
+            alert("persona actualizado correctamente");
         } else {
-            console.log("Creando ciudadano:", ciudadano);
-            alert("Ciudadano registrado correctamente");
+            console.log("Creando persona:", persona);
+            alert("persona registrado correctamente");
         }
 
-        navigate("/ciudadanos");
+        navigate("/persona");
     };
 
-    const title = id ? 'Actualizar Ciudadano' : 'Registrar Ciudadano';
+    const title = id ? 'Actualizar persona' : 'Registrar persona';
 
     return (
         <div className='container'>
@@ -69,7 +69,7 @@ export const AddCiudadanoComponent = () => {
                 <div className='card col-md-6 offset-md-3 offset-md-3'>
                     <h2 className='text-center'>{title}</h2>
                     <div className='card-body'>
-                        <form onSubmit={saveCiudadano}>
+                        <form onSubmit={savepersona}>
 
                             <div className='form-group mb-2'>
                                 <label className='form-label'>Nombre</label>
@@ -156,7 +156,7 @@ export const AddCiudadanoComponent = () => {
                                 <button type="submit" className="btn btn-primary mb-2">
                                     {id ? 'Actualizar' : 'Registrar'}
                                 </button>
-                                <Link to="/ciudadano" className='btn btn-danger mb-2'>Cancelar</Link>
+                                <Link to="/persona" className='btn btn-danger mb-2'>Cancelar</Link>
                             </div>
 
                         </form>
@@ -167,4 +167,4 @@ export const AddCiudadanoComponent = () => {
     );
 };
 
-export default AddCiudadanoComponent;
+export default AddPersonaComponent;
