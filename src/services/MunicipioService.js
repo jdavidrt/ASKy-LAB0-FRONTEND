@@ -11,15 +11,6 @@ class MunicipioService {
         return axios.get(`${MUNICIPIO_BASE_RES_API_URL}/${id}`);
     }
 
-    getAllMunicipiosordenados() {
-        return axios.get(`${MUNICIPIO_BASE_RES_API_URL}/ordenados`);
-    }
-
-    getMunicipioByNombre(nombre) {
-        return axios.get(`${MUNICIPIO_BASE_RES_API_URL}/${nombre}`);
-    }
-
-
     createMunicipio(municipio) {
         return axios.post(`${MUNICIPIO_BASE_RES_API_URL}`, municipio, {
             headers: {
@@ -27,18 +18,19 @@ class MunicipioService {
             }
         });
     }
-    /*
 
-    updateFutbolista(futbolista){
-        return axios.put(`${MUNICIPIO_BASE_RES_API_URL}/actualizaFutbolista`, futbolista, {
+    /*
+    // Actualizar una Municipio existente
+    updateMunicipio(id, municipio) {
+        return axios.put(`${MUNICIPIO_BASE_RES_API_URL}/${id}`, municipio, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
     }
 
-    deleteFutbolista(id){
-        return axios.delete(`${MUNICIPIO_BASE_RES_API_URL}/eliminaFutbolista/${id}`);
+    deleteMunicipio(id){
+        return axios.delete(`${MUNICIPIO_BASE_RES_API_URL}/${id}`);
     }
         */
 
