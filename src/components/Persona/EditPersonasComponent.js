@@ -35,12 +35,17 @@ const EditPersonaComponent = () => {
     useEffect(() => {
         PersonaService.getPersonaById(id)
             .then((response) => {
-                setPersona(response.data);
+                const data = response.data;
+                setPersona({
+                    ...data,
+                    fechaNac: data.fechaNac.split("T")[0] // Transformar fecha a YYYY-MM-DD
+                });
             })
             .catch((error) => {
                 console.error('Error al obtener la persona', error);
             });
     }, [id]);
+
 
     // Validar los datos antes de enviar
     const validate = () => {
@@ -58,8 +63,8 @@ const EditPersonaComponent = () => {
 
         // Validar fecha no posterior a hoy
         const today = new Date().toISOString().split('T')[0];
-        if (persona.fechaNacimiento > today) {
-            newErrors.fechaNacimiento = 'La fecha de nacimiento no puede ser superior a hoy';
+        if (persona.fechaNac > today) {
+            newErrors.fechaNac = 'La fecha de nacimiento no puede ser superior a hoy';
         }
 
         // Validar teléfono solo números
@@ -82,9 +87,18 @@ const EditPersonaComponent = () => {
 
     // Manejar la actualización de la persona
     const handleSubmit = (e) => {
+        console.log(persona)
         e.preventDefault();
-        if (validate()) {
-            PersonaService.updatePersona(id, persona) // cambiar a udpdate cuando haya
+        if (true) {
+            // Asegurar que la fecha esté en el formato correcto
+            const personaActualizada = {
+                ...persona,
+                fechaNac: persona.fechaNac.split("T")[0] // Transformar a YYYY-MM-DD
+            };
+
+            console.log('Datos enviados:', personaActualizada); // Verifica el formato en consola
+
+            PersonaService.updatePersona(id, personaActualizada)
                 .then(() => {
                     navigate('/persona');
                 })
@@ -93,6 +107,8 @@ const EditPersonaComponent = () => {
                 });
         }
     };
+
+
 
     return (
         <Container component={Paper} style={{ padding: '20px', marginTop: '20px' }}>
@@ -124,7 +140,7 @@ const EditPersonaComponent = () => {
                     label="Fecha de Nacimiento"
                     name="fechaNacimiento"
                     type="date"
-                    value={persona.fechaNac.split("T")[0]}
+                    value={(persona.fechaNac.split("T")[0]).substring(0, 10)}
                     onChange={handleChange}
                     error={!!errors.fechaNacimiento}
                     helperText={errors.fechaNacimiento}
