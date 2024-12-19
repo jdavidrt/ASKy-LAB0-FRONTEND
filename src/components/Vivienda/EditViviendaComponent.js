@@ -68,9 +68,12 @@ const EditViviendaComponent = () => {
         if (!vivienda.municipio.id) newErrors.municipio = 'El municipio es obligatorio';
         if (!vivienda.capacidad || vivienda.capacidad <= 0)
             newErrors.capacidad = 'La capacidad debe ser un número positivo';
+        if (vivienda.capacidad > 10)
+            newErrors.capacidad = 'La capacidad no puede ser mayor a 10';
         if (!vivienda.niveles || vivienda.niveles <= 0)
             newErrors.niveles = 'Los niveles deben ser un número positivo';
-
+        if (vivienda.niveles > 6)
+            newErrors.niveles = 'El número de niveles no puede ser mayor a 6';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };

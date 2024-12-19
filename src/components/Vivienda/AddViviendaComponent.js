@@ -42,8 +42,18 @@ const AddViviendaComponent = () => {
             return;
         }
 
+        if (capacidad > 10) {
+            alert('La capacidad no puede ser mayor a 10.');
+            return;
+        }
+
         if (!niveles || niveles <= 0) {
             alert('El número de niveles debe ser un número positivo.');
+            return;
+        }
+
+        if (niveles > 6) {
+            alert('El número de niveles no puede ser mayor a 6.');
             return;
         }
 
