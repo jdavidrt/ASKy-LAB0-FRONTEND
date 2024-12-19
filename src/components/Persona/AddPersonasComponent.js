@@ -107,18 +107,28 @@ const AddPersonaComponent = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
+            // Mapear tipo de documento a los valores esperados
+            const tipoDocumentoMap = {
+                'Cédula de Ciudadanía': 'CC',
+                'Tarjeta de Identidad': 'TI',
+                'Cédula de Extranjería': 'CE'
+            };
+    
+            // Buscar el tipo de documento correspondiente
+            const tipoDocumento = tipoDocumentoMap[tipoDocumentoOpciones.find(opt => opt.value === persona.tipoDocumento)?.label] || persona.tipoDocumento;
+    
             const formattedPersona = {
-                id: parseInt(persona.numeroDocumento, 10),
-                tipo_doc: tipoDocumentoOpciones.find(opt => opt.value === persona.tipoDocumento)?.label,
+                id: parseInt(persona.numeroDocumento, 10), // Convertir el número de documento a un entero
+                tipo_doc: tipoDocumento, // Asignar el tipo de documento mapeado
                 nombre: `${persona.nombre} ${persona.apellido}`,
                 sexo: persona.sexo,
                 fechaNac: `${persona.fechaNacimiento}T00:00:00`,
-                telefono: parseInt(persona.telefono, 10),
+                telefono: persona.telefono,
                 viviendaActual: {
-                    id: persona.viviendaActual.id
+                    id: parseInt(persona.viviendaActual.id, 10) // Convertir el id de vivienda a un entero
                 }
             };
-
+    
             PersonaService.createPersona(formattedPersona)
                 .then(() => {
                     alert('Persona registrada correctamente');
