@@ -12,7 +12,10 @@ import {
     TextField,
     TablePagination,
     Typography,
+    Snackbar,
+    Alert,
 } from '@mui/material';
+import MunicipioService from '../../services/MunicipioService'; // Asegúrate de que la ruta sea correcta
 
 const ListMunicipiosComponent = () => {
     const [municipios, setMunicipios] = useState([]);
@@ -20,23 +23,49 @@ const ListMunicipiosComponent = () => {
     const [filteredMunicipios, setFilteredMunicipios] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
     const navigate = useNavigate();
 
-    // Datos de ejemplo
-    const ejemploMunicipios = [
-        { id: 1, nombre: 'Municipio A' },
-        { id: 2, nombre: 'Municipio B' },
-        { id: 3, nombre: 'Municipio C' },
-        { id: 4, nombre: 'Municipio D' },
-        { id: 5, nombre: 'Municipio E' },
-    ];
-
     useEffect(() => {
-        setMunicipios(ejemploMunicipios);
-        setFilteredMunicipios(ejemploMunicipios); // Inicializar la lista filtrada
+        loadMunicipios();
     }, []);
 
-    // Manejar búsqueda
+    const loadMunicipios = async () => {
+        try {
+            const response = await MunicipioService.getAllMunicipios();
+            setMunicipios(response.data);
+            setFilteredMunicipios(response.data);
+        } catch (error) {
+            console.error('Error al cargar municipios:', error);
+            setSnackbar({
+                open: true,
+                message: 'Error al cargar los municipios',
+                severity: 'error'
+            });
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('¿Está seguro de que desea eliminar este municipio?')) {
+            try {
+                await MunicipioService.deleteMunicipio(id);
+                setSnackbar({
+                    open: true,
+                    message: 'Municipio eliminado exitosamente',
+                    severity: 'success'
+                });
+                loadMunicipios(); // Recargar la lista después de eliminar
+            } catch (error) {
+                console.error('Error al eliminar municipio:', error);
+                setSnackbar({
+                    open: true,
+                    message: 'Error al eliminar el municipio',
+                    severity: 'error'
+                });
+            }
+        }
+    };
+
     const handleSearch = (e) => {
         const term = e.target.value.toLowerCase();
         setSearchTerm(term);
@@ -47,18 +76,20 @@ const ListMunicipiosComponent = () => {
                     municipio.id.toString().includes(term)
             )
         );
-        setPage(0); // Reiniciar la página al buscar
+        setPage(0);
     };
 
-    // Manejar cambio de página
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    // Manejar cambio de registros por página
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
@@ -111,9 +142,7 @@ const ListMunicipiosComponent = () => {
                                             variant="outlined"
                                             color="secondary"
                                             size="small"
-                                            onClick={() =>
-                                                setMunicipios(municipios.filter((m) => m.id !== municipio.id))
-                                            }
+                                            onClick={() => handleDelete(municipio.id)}
                                         >
                                             Eliminar
                                         </Button>
@@ -132,6 +161,20 @@ const ListMunicipiosComponent = () => {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </TableContainer>
+
+            <Snackbar 
+                open={snackbar.open} 
+                autoHideDuration={6000} 
+                onClose={handleCloseSnackbar}
+            >
+                <Alert 
+                    onClose={handleCloseSnackbar} 
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

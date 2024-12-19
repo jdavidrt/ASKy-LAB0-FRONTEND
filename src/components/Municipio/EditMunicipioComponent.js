@@ -68,6 +68,7 @@ const EditMunicipioComponent = () => {
                         }}
                         fullWidth
                         style={{ marginBottom: '10px' }}
+                        disabled
                     />
                     <TextField
                         label="Nombre"

@@ -119,21 +119,24 @@ const EditViviendaComponent = () => {
                         error={!!errors.direccion}
                         helperText={errors.direccion}
                     />
-                    <FormControl fullWidth margin="normal" error={!!errors.municipio} >
-                        <InputLabel>Municipio</InputLabel>
-                        <Select
+                    <FormControl fullWidth margin="normal" error={!!errors.municipio} variant="outlined">
+                        <TextField
+                            select
+                            label={vivienda.municipio.nombre || "Selecciona un municipio"}
                             name="municipio"
-                            value={vivienda.municipio.id || ''} // Asegurarse de que municipio.id siempre sea accesible
+                            value={vivienda.municipio.id || ''} // Asegúrate de que municipio.id siempre sea accesible
                             onChange={handleMunicipioChange}
+                            helperText={errors.municipio} // Mensaje de error
+                            error={!!errors.municipio}
                         >
                             {municipios.map((municipio) => (
                                 <MenuItem key={municipio.id} value={municipio.id}>
                                     {municipio.nombre}
                                 </MenuItem>
                             ))}
-                        </Select>
-                        {errors.municipio && <span>{errors.municipio}</span>}
+                        </TextField>
                     </FormControl>
+
                     <TextField
                         fullWidth
                         margin="normal"
