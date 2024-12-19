@@ -43,7 +43,7 @@ const ListPersonasComponent = () => {
                 (persona) =>
                     persona.nombre.toLowerCase().includes(term) ||
                     persona.apellido.toLowerCase().includes(term) ||
-                    persona.numeroDocumento.includes(term) ||
+                    persona.id.includes(term) ||
                     persona.telefono.includes(term)
             )
         );
@@ -72,6 +72,8 @@ const ListPersonasComponent = () => {
             });
     };
 
+    console.log(filteredPersonas)
+
     return (
         <div className="container">
             <h2 className="text-center">Lista de personas</h2>
@@ -96,14 +98,12 @@ const ListPersonasComponent = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
                             <TableCell>Nombre</TableCell>
-                            <TableCell>Apellido</TableCell>
-                            <TableCell>Tipo de Documento</TableCell>
                             <TableCell>Número de Documento</TableCell>
                             <TableCell>Fecha de Nacimiento</TableCell>
                             <TableCell>Sexo</TableCell>
                             <TableCell>Teléfono</TableCell>
+                            <TableCell>Vivienda Actual</TableCell>
                             <TableCell>Acciones</TableCell>
                         </TableRow>
                     </TableHead>
@@ -112,14 +112,12 @@ const ListPersonasComponent = () => {
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((persona) => (
                                 <TableRow key={persona.id}>
-                                    <TableCell>{persona.id}</TableCell>
                                     <TableCell>{persona.nombre}</TableCell>
-                                    <TableCell>{persona.apellido}</TableCell>
-                                    <TableCell>{persona.tipoDocumento}</TableCell>
-                                    <TableCell>{persona.numeroDocumento}</TableCell>
-                                    <TableCell>{new Date(persona.fechaNacimiento).toLocaleDateString()}</TableCell>
+                                    <TableCell>{persona.id}</TableCell>
+                                    <TableCell>{new Date(persona.fechaNac).toLocaleDateString()}</TableCell>
                                     <TableCell>{persona.sexo}</TableCell>
                                     <TableCell>{persona.telefono}</TableCell>
+                                    <TableCell>{persona.viviendaId}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outlined"
