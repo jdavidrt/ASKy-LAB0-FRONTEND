@@ -23,6 +23,17 @@ class PersonaService {
         });
     }
 
+    
+    // Actualizar una Persona existente
+    updatePersona(id, persona) {
+        return axios.put(`${PERSONA_BASE_RES_API_URL}/${id}`, persona, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+    
+
     // Eliminar una persona por su ID
     deletePersonaById(id) {
         return axios.delete(`${PERSONA_BASE_RES_API_URL}/${id}`);

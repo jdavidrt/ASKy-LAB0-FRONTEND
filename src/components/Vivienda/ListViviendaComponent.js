@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Button,
     Table,
@@ -13,6 +13,7 @@ import {
     TablePagination,
     Typography,
 } from '@mui/material';
+import ViviendaService from '../../services/ViviendaService';
 
 const ListViviendasComponent = () => {
     const [viviendas, setViviendas] = useState([]);
@@ -20,20 +21,20 @@ const ListViviendasComponent = () => {
     const [filteredViviendas, setFilteredViviendas] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Datos de ejemplo
-    const ejemploViviendas = [
-        { id: 1, direccion: 'Calle 123 #12-34', idMunicipio: 101, capacidad: 4, niveles: 2 },
-        { id: 2, direccion: 'Avenida 45 #12-34', idMunicipio: 102, capacidad: 6, niveles: 3 },
-        { id: 3, direccion: 'Carrera 78 #12-34', idMunicipio: 103, capacidad: 3, niveles: 1 },
-        { id: 4, direccion: 'Calle 10 #12-34', idMunicipio: 104, capacidad: 8, niveles: 4 },
-        { id: 5, direccion: 'Avenida 7 #12-34', idMunicipio: 105, capacidad: 5, niveles: 2 },
-    ];
-
+    // Cargar todas las viviendas al montar el componente
     useEffect(() => {
-        setViviendas(ejemploViviendas);
-        setFilteredViviendas(ejemploViviendas); // Inicializar la lista filtrada
+        ViviendaService.getAllViviendas()
+            .then((response) => {
+                setViviendas(response.data);
+                setFilteredViviendas(response.data);
+            })
+            .catch((error) => {
+                setError('Error al cargar las viviendas.');
+                console.error(error);
+            });
     }, []);
 
     // Manejar búsqueda
@@ -44,7 +45,7 @@ const ListViviendasComponent = () => {
             viviendas.filter(
                 (vivienda) =>
                     vivienda.direccion.toLowerCase().includes(term) ||
-                    vivienda.idMunicipio.toString().includes(term) 
+                    vivienda.idMunicipio.toString().includes(term)
             )
         );
         setPage(0); // Reiniciar la página al buscar
@@ -61,9 +62,31 @@ const ListViviendasComponent = () => {
         setPage(0);
     };
 
+    // Manejar eliminación de una vivienda
+    const handleDelete = (id) => {
+        if (window.confirm('¿Estás seguro de eliminar esta vivienda?')) {
+            ViviendaService.deleteViviendaById(id)
+                .then(() => {
+                    setViviendas((prevViviendas) => prevViviendas.filter((v) => v.id !== id));
+                    setFilteredViviendas((prevViviendas) => prevViviendas.filter((v) => v.id !== id));
+                })
+                .catch((error) => {
+                    setError('Error al eliminar la vivienda.');
+                    console.error(error);
+                });
+        }
+    };
+
     return (
         <div className="container">
             <h2 className="text-center">Lista de Viviendas</h2>
+
+            {error && (
+                <Typography color="error" gutterBottom>
+                    {error}
+                </Typography>
+            )}
+
             <div style={{ marginBottom: '20px' }}>
                 <TextField
                     label="Buscar"
@@ -73,15 +96,17 @@ const ListViviendasComponent = () => {
                     fullWidth
                 />
                 <Typography variant="body2" color="textSecondary" style={{ marginTop: '8px' }}>
-                    Puedes buscar por <b>dirección</b> ó <b>ID del municipio</b>.
+                    Puedes buscar por <b>dirección</b> o <b>ID del municipio</b>.
                 </Typography>
             </div>
+
             <Link to="/add-vivienda" style={{ textDecoration: 'none' }}>
                 <Button variant="contained" color="primary">
                     Agregar Vivienda
                 </Button>
             </Link>
-            <TableContainer component={Paper}>
+
+            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -117,9 +142,7 @@ const ListViviendasComponent = () => {
                                             variant="outlined"
                                             color="secondary"
                                             size="small"
-                                            onClick={() =>
-                                                setViviendas(viviendas.filter((v) => v.id !== vivienda.id))
-                                            }
+                                            onClick={() => handleDelete(vivienda.id)}
                                         >
                                             Eliminar
                                         </Button>

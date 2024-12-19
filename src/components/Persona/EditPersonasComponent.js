@@ -85,7 +85,7 @@ const EditPersonaComponent = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            PersonaService.createPersona(persona) // Usamos createPersona cambiar por put cuando exista el servicio
+            PersonaService.updatePersona(id,persona) // cambiar a udpdate cuando haya
                 .then(() => {
                     navigate('/persona'); 
                 })
