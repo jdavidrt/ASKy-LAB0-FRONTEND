@@ -108,12 +108,12 @@ const AddPersonaComponent = () => {
         e.preventDefault();
         if (validate()) {
             const formattedPersona = {
-                id: persona.numeroDocumento,
+                id: parseInt(persona.numeroDocumento, 10),
                 tipo_doc: tipoDocumentoOpciones.find(opt => opt.value === persona.tipoDocumento)?.label,
                 nombre: `${persona.nombre} ${persona.apellido}`,
                 sexo: persona.sexo,
                 fechaNac: `${persona.fechaNacimiento}T00:00:00`,
-                telefono: persona.telefono,
+                telefono: parseInt(persona.telefono, 10),
                 viviendaActual: {
                     id: persona.viviendaActual.id
                 }
