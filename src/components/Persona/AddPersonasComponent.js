@@ -57,8 +57,8 @@ const AddPersonaComponent = () => {
         }
 
         // Validar número de documento solo números
-        if (!/^\d*$/.test(persona.numeroDocumento)) {
-            newErrors.numeroDocumento = 'El número de documento solo puede contener números';
+        if (!/^\d{1,10}$/.test(persona.numeroDocumento)) {
+            newErrors.numeroDocumento = 'El número de documento debe ser un número positivo de hasta 10 dígitos';
         }
 
         // Validar fecha no posterior a hoy
@@ -68,8 +68,8 @@ const AddPersonaComponent = () => {
         }
 
         // Validar teléfono solo números
-        if (!/^\d*$/.test(persona.telefono)) {
-            newErrors.telefono = 'El teléfono solo puede contener números';
+        if (!/^\d{10}$/.test(persona.telefono)) {
+            newErrors.telefono = 'El teléfono debe contener exactamente 10 dígitos numéricos positivos';
         }
 
         // Validar vivienda
@@ -122,11 +122,10 @@ const AddPersonaComponent = () => {
                 tipo_doc: tipoDocumento, // Asignar el tipo de documento mapeado
                 nombre: `${persona.nombre} ${persona.apellido}`,
                 sexo: persona.sexo,
-                fechaNac: `${persona.fechaNacimiento}T00:00:00`,
+                fechaNac: `${persona.fechaNacimiento}T00:00:00.000+00:00`,
                 telefono: persona.telefono,
-                viviendaActual: {
-                    id: parseInt(persona.viviendaActual.id, 10) // Convertir el id de vivienda a un entero
-                }
+                viviendaId: parseInt(persona.viviendaActual.id, 10) // Convertir el id de vivienda a un entero
+                
             };
 
             PersonaService.createPersona(formattedPersona)

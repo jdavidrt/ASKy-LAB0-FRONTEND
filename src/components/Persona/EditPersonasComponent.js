@@ -1,114 +1,132 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Container, Typography, Paper, TextField, MenuItem } from '@mui/material';
 import PersonaService from '../../services/PersonaService';
+import ViviendaService from '../../services/ViviendaService';
 
 const EditPersonaComponent = () => {
-    const { id } = useParams();
     const navigate = useNavigate();
+    const { id } = useParams(); // Obtén el ID de la persona desde la URL
 
-    // Estado inicial para la persona
     const [persona, setPersona] = useState({
         nombre: '',
-        apellido: '',
+        tipoDocumento: '',
         numeroDocumento: '',
-        fechaNac: '',
+        fechaNacimiento: '',
         sexo: '',
-        telefono: ''
+        telefono: '',
+        viviendaActual: {
+            id: '',
+        },
     });
 
     const [errors, setErrors] = useState({});
+    const [viviendas, setViviendas] = useState([]);
 
-    // Opciones para los select de tipo de documento y sexo
     const tipoDocumentoOpciones = [
-        { value: 'CC', label: 'CC' },
-        { value: 'TI', label: 'TI' },
-        { value: 'CE', label: 'CE' }
+        { value: 'CC', label: 'Cédula de Ciudadanía' },
+        { value: 'TI', label: 'Tarjeta de Identidad' },
+        { value: 'CE', label: 'Cédula de Extranjería' },
     ];
 
     const sexoOpciones = [
         { value: 'M', label: 'Masculino' },
-        { value: 'F', label: 'Femenino' }
+        { value: 'F', label: 'Femenino' },
     ];
 
-    // Cargar la persona por su ID al iniciar el componente
+    // Cargar la información inicial de la persona y las viviendas
     useEffect(() => {
         PersonaService.getPersonaById(id)
             .then((response) => {
                 const data = response.data;
                 setPersona({
-                    ...data,
-                    fechaNac: data.fechaNac.split("T")[0] // Transformar fecha a YYYY-MM-DD
+                    nombre: data.nombre,
+                    tipoDocumento: data.tipo_doc,
+                    numeroDocumento: String(data.id), // El ID se usa como número de documento
+                    fechaNacimiento: data.fechaNac.split('T')[0], // Ajustar formato ISO
+                    sexo: data.sexo,
+                    telefono: data.telefono || '',
+                    viviendaActual: {
+                        id: String(data.viviendaId),
+                    },
                 });
             })
             .catch((error) => {
-                console.error('Error al obtener la persona', error);
+                console.error('Error al cargar la persona:', error);
+                alert('No se pudo cargar la persona');
+                navigate('/persona');
             });
-    }, [id]);
 
+        ViviendaService.getAllViviendas()
+            .then((response) => {
+                setViviendas(response.data);
+            })
+            .catch((error) => {
+                console.error('Error al obtener las viviendas:', error);
+            });
+    }, [id, navigate]);
 
-    // Validar los datos antes de enviar
     const validate = () => {
         const newErrors = {};
-
-        // Validar apellido solo letras
-        if (!/^[a-zA-Z\s]+$/.test(persona.apellido)) {
-            newErrors.apellido = 'El apellido solo puede contener letras';
+        if (!/^\d{1,10}$/.test(persona.numeroDocumento)) {
+            newErrors.numeroDocumento = 'El número de documento solo puede contener números y debe ser de hasta 10 dígitos';
         }
-
-        // Validar cedula solo números
-        if (!/^\d*$/.test(persona.numeroDocumento)) {
-            newErrors.numeroDocumento = 'El número de documento solo puede contener números';
-        }
-
-        // Validar fecha no posterior a hoy
         const today = new Date().toISOString().split('T')[0];
-        if (persona.fechaNac > today) {
-            newErrors.fechaNac = 'La fecha de nacimiento no puede ser superior a hoy';
+        if (persona.fechaNacimiento > today) {
+            newErrors.fechaNacimiento = 'La fecha de nacimiento no puede ser superior a hoy';
         }
-
-        // Validar teléfono solo números
-        if (!/^\d*$/.test(persona.telefono)) {
-            newErrors.telefono = 'El teléfono solo puede contener números';
+        if (!/^\d{10}$/.test(persona.telefono)) {
+            newErrors.telefono = 'El teléfono debe contener exactamente 10 dígitos numéricos positivos';
         }
-
+        if (!persona.viviendaActual.id) {
+            newErrors.viviendaActual = 'Debe seleccionar una vivienda válida';
+        }
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Retorna true si no hay errores
+        return Object.keys(newErrors).length === 0;
     };
 
-    // Manejar cambios en los inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPersona({ ...persona, [name]: value });
-
-        // Limpiar errores del campo en tiempo real
         setErrors({ ...errors, [name]: '' });
     };
 
-    // Manejar la actualización de la persona
+    const handleNestedChange = (e, parentKey, childKey) => {
+        const { value } = e.target;
+        setPersona({
+            ...persona,
+            [parentKey]: {
+                ...persona[parentKey],
+                [childKey]: value,
+            },
+        });
+        setErrors({ ...errors, [parentKey]: '' });
+    };
+
     const handleSubmit = (e) => {
-        console.log(persona)
         e.preventDefault();
-        if (true) {
-            // Asegurar que la fecha esté en el formato correcto
-            const personaActualizada = {
-                ...persona,
-                fechaNac: persona.fechaNac.split("T")[0] // Transformar a YYYY-MM-DD
+        if (validate()) {
+            const formattedPersona = {
+                id: parseInt(persona.numeroDocumento, 10),
+                tipo_doc: persona.tipoDocumento,
+                nombre: persona.nombre,
+                sexo: persona.sexo,
+                fechaNac: `${persona.fechaNacimiento}T00:00:00.000+00:00`,
+                telefono: persona.telefono,
+                viviendaId: parseInt(persona.viviendaActual.id, 10),
             };
 
-            console.log('Datos enviados:', personaActualizada); // Verifica el formato en consola
-
-            PersonaService.updatePersona(id, personaActualizada)
+            PersonaService.updatePersona(id, formattedPersona)
                 .then(() => {
+                    alert('Persona actualizada correctamente');
                     navigate('/persona');
                 })
                 .catch((error) => {
-                    console.error('Error al actualizar la persona', error);
+                    console.error('Error al actualizar la persona:', error);
+                    alert('Hubo un error al actualizar la persona');
                 });
         }
     };
-
-
 
     return (
         <Container component={Paper} style={{ padding: '20px', marginTop: '20px' }}>
@@ -126,24 +144,45 @@ const EditPersonaComponent = () => {
                     required
                 />
                 <TextField
-                    label="Número de Documento"
-                    name="numeroDocumento"
-                    value={persona.id}
+                    select
+                    label="Tipo de Documento"
+                    name="tipoDocumento"
+                    value={persona.tipoDocumento}
                     onChange={handleChange}
-                    error={!!errors.id}
-                    helperText={errors.id}
                     fullWidth
                     margin="normal"
+                    required
+                >
+                    <MenuItem value="" disabled>
+                        Seleccione el tipo de documento
+                    </MenuItem>
+                    {tipoDocumentoOpciones.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    label="Número de Documento"
+                    name="numeroDocumento"
+                    value={persona.numeroDocumento}
+                    onChange={handleChange}
+                    error={!!errors.numeroDocumento}
+                    helperText={errors.numeroDocumento}
+                    fullWidth
+                    margin="normal"
+                    disabled 
                     required
                 />
                 <TextField
                     label="Fecha de Nacimiento"
                     name="fechaNacimiento"
                     type="date"
-                    value={(persona.fechaNac.split("T")[0]).substring(0, 10)}
+                    value={persona.fechaNacimiento}
                     onChange={handleChange}
                     error={!!errors.fechaNacimiento}
                     helperText={errors.fechaNacimiento}
+                    InputLabelProps={{ shrink: true }}
                     fullWidth
                     margin="normal"
                     required
@@ -158,7 +197,9 @@ const EditPersonaComponent = () => {
                     margin="normal"
                     required
                 >
-                    <MenuItem value="" disabled>Seleccione el sexo</MenuItem>
+                    <MenuItem value="" disabled>
+                        Seleccione el sexo
+                    </MenuItem>
                     {sexoOpciones.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                             {option.label}
@@ -175,8 +216,27 @@ const EditPersonaComponent = () => {
                     fullWidth
                     margin="normal"
                 />
+                <TextField
+                    select
+                    label="Vivienda Actual"
+                    name="viviendaActualId"
+                    value={persona.viviendaActual.id}
+                    onChange={(e) => handleNestedChange(e, 'viviendaActual', 'id')}
+                    fullWidth
+                    margin="normal"
+                    required
+                >
+                    <MenuItem value="" disabled>
+                        Seleccione una vivienda
+                    </MenuItem>
+                    {viviendas.map((vivienda) => (
+                        <MenuItem key={vivienda.id} value={vivienda.id}>
+                            {`${vivienda.direccion} (ID: ${vivienda.id})`}
+                        </MenuItem>
+                    ))}
+                </TextField>
                 <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
-                    Guardar
+                    Actualizar
                 </Button>
                 <Button
                     variant="outlined"

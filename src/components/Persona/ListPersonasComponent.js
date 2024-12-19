@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import PersonaService from '../../services/PersonaService'; // Importa tu servicio
+import PersonaService from '../../services/PersonaService';
+import ViviendaService from '../../services/ViviendaService';
 import {
     Button,
     Table,
@@ -17,14 +18,15 @@ import {
 
 const ListPersonasComponent = () => {
     const [personas, setPersonas] = useState([]);
+    const [viviendas, setViviendas] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredPersonas, setFilteredPersonas] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const navigate = useNavigate();
 
+    // Cargar personas y viviendas desde los servicios
     useEffect(() => {
-        // Cargar personas desde el servicio
         PersonaService.getAllPersonas()
             .then((response) => {
                 setPersonas(response.data);
@@ -32,6 +34,14 @@ const ListPersonasComponent = () => {
             })
             .catch((error) => {
                 console.error('Error al cargar las personas:', error);
+            });
+
+        ViviendaService.getAllViviendas()
+            .then((response) => {
+                setViviendas(response.data);
+            })
+            .catch((error) => {
+                console.error('Error al cargar las viviendas:', error);
             });
     }, []);
 
@@ -42,8 +52,7 @@ const ListPersonasComponent = () => {
             personas.filter(
                 (persona) =>
                     persona.nombre.toLowerCase().includes(term) ||
-                    persona.apellido.toLowerCase().includes(term) ||
-                    persona.id.includes(term) ||
+                    persona.id.toString().includes(term) ||
                     persona.telefono.includes(term)
             )
         );
@@ -60,19 +69,26 @@ const ListPersonasComponent = () => {
     };
 
     const handleDelete = (id) => {
-        PersonaService.deletePersonaById(id)
-            .then(() => {
-                // Actualizar el estado local después de eliminar
-                const updatedPersonas = personas.filter((persona) => persona.id !== id);
-                setPersonas(updatedPersonas);
-                setFilteredPersonas(updatedPersonas);
-            })
-            .catch((error) => {
-                console.error('Error al eliminar la persona:', error);
-            });
+        if (window.confirm('¿Estás seguro de eliminar esta persona?')) {
+            PersonaService.deletePersonaById(id)
+                .then(() => {
+                    const updatedPersonas = personas.filter((persona) => persona.id !== id);
+                    setPersonas(updatedPersonas);
+                    setFilteredPersonas(updatedPersonas);
+                })
+                .catch((error) => {
+                    console.error('Error al eliminar la persona:', error);
+                });
+        }
     };
 
-    console.log(filteredPersonas)
+    // Obtener la dirección de la vivienda asociada a una persona
+    const getDireccionVivienda = (personaId) => {
+        const vivienda = viviendas.find((vivienda) =>
+            vivienda.habitantes.some((habitante) => habitante.id === personaId)
+        );
+        return vivienda ? vivienda.direccion : 'Sin asignar';
+    };
 
     return (
         <div className="container">
@@ -86,7 +102,7 @@ const ListPersonasComponent = () => {
                     fullWidth
                 />
                 <Typography variant="body2" color="textSecondary" style={{ marginTop: '8px' }}>
-                    Puedes buscar por <b>nombre</b>, <b>apellido</b>, <b>número de documento</b> o <b>teléfono</b>.
+                    Puedes buscar por <b>nombre</b>, <b>número de documento</b> o <b>teléfono</b>.
                 </Typography>
             </div>
             <Link to="/add-persona" style={{ textDecoration: 'none' }}>
@@ -117,7 +133,7 @@ const ListPersonasComponent = () => {
                                     <TableCell>{new Date(persona.fechaNac).toLocaleDateString()}</TableCell>
                                     <TableCell>{persona.sexo}</TableCell>
                                     <TableCell>{persona.telefono}</TableCell>
-                                    <TableCell>{persona.viviendaId}</TableCell>
+                                    <TableCell>{getDireccionVivienda(persona.id)}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outlined"
