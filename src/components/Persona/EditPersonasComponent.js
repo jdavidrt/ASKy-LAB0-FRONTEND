@@ -11,9 +11,8 @@ const EditPersonaComponent = () => {
     const [persona, setPersona] = useState({
         nombre: '',
         apellido: '',
-        tipoDocumento: '',
         numeroDocumento: '',
-        fechaNacimiento: '',
+        fechaNac: '',
         sexo: '',
         telefono: ''
     });
@@ -22,9 +21,9 @@ const EditPersonaComponent = () => {
 
     // Opciones para los select de tipo de documento y sexo
     const tipoDocumentoOpciones = [
-        { value: 'CC', label: 'Cédula de Ciudadanía' },
-        { value: 'TI', label: 'Tarjeta de Identidad' },
-        { value: 'CE', label: 'Cédula de Extranjería' }
+        { value: 'CC', label: 'CC' },
+        { value: 'TI', label: 'TI' },
+        { value: 'CE', label: 'CE' }
     ];
 
     const sexoOpciones = [
@@ -36,7 +35,7 @@ const EditPersonaComponent = () => {
     useEffect(() => {
         PersonaService.getPersonaById(id)
             .then((response) => {
-                setPersona(response.data); 
+                setPersona(response.data);
             })
             .catch((error) => {
                 console.error('Error al obtener la persona', error);
@@ -85,9 +84,9 @@ const EditPersonaComponent = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            PersonaService.updatePersona(id,persona) // cambiar a udpdate cuando haya
+            PersonaService.updatePersona(id, persona) // cambiar a udpdate cuando haya
                 .then(() => {
-                    navigate('/persona'); 
+                    navigate('/persona');
                 })
                 .catch((error) => {
                     console.error('Error al actualizar la persona', error);
@@ -111,40 +110,12 @@ const EditPersonaComponent = () => {
                     required
                 />
                 <TextField
-                    label="Apellido"
-                    name="apellido"
-                    value={persona.apellido}
-                    onChange={handleChange}
-                    error={!!errors.apellido}
-                    helperText={errors.apellido}
-                    fullWidth
-                    margin="normal"
-                    required
-                />
-                <TextField
-                    select
-                    label="Tipo de Documento"
-                    name="tipoDocumento"
-                    value={persona.tipoDocumento}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    required
-                >
-                    <MenuItem value="" disabled>Seleccione el tipo de documento</MenuItem>
-                    {tipoDocumentoOpciones.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
-                <TextField
                     label="Número de Documento"
                     name="numeroDocumento"
-                    value={persona.numeroDocumento}
+                    value={persona.id}
                     onChange={handleChange}
-                    error={!!errors.numeroDocumento}
-                    helperText={errors.numeroDocumento}
+                    error={!!errors.id}
+                    helperText={errors.id}
                     fullWidth
                     margin="normal"
                     required
@@ -153,11 +124,10 @@ const EditPersonaComponent = () => {
                     label="Fecha de Nacimiento"
                     name="fechaNacimiento"
                     type="date"
-                    value={persona.fechaNacimiento}
+                    value={persona.fechaNac.split("T")[0]}
                     onChange={handleChange}
                     error={!!errors.fechaNacimiento}
                     helperText={errors.fechaNacimiento}
-                    InputLabelProps={{ shrink: true }}
                     fullWidth
                     margin="normal"
                     required
