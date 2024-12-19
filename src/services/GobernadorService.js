@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const GOBERNANTE_BASE_RES_API_URL = "http://localhost:8080/api/Gobernantes"
+const GOBERNANTE_BASE_RES_API_URL = "https://crud-municipios-production.up.railway.app/api/gobernadores"
 
 class GobernanteService {
     getAllGobernantes() {
