@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PERSONA_BASE_RES_API_URL = "http://localhost:8080/api/personas";
+const PERSONA_BASE_RES_API_URL = "https://crud-municipios-production.up.railway.app/api/personas";
 
 class PersonaService {
     // Obtener todas las personas
@@ -13,7 +13,7 @@ class PersonaService {
         return axios.get(`${PERSONA_BASE_RES_API_URL}/${id}`);
     }
 
-    
+
     // Crear una nueva persona
     createPersona(persona) {
         return axios.post(PERSONA_BASE_RES_API_URL, persona, {
