@@ -1,52 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-export const EditGobernadorComponent = () => {
+export const EditPosesionComponent = () => {
     const [idPersona, setIdPersona] = useState("");
     const [idVivienda, setIdVivienda] = useState("");
     const [fechaPosesion, setFechaPosesion] = useState("");
-    const { id } = useParams(); // Obtiene el ID del gobernador desde la URL
+    const { id } = useParams(); // Obtiene el ID de la posesión desde la URL
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Simulando obtención de datos del gobernador a partir del ID
         if (id) {
-            const ejemploGobernador = {
+            // Simulando obtención de datos de la posesión a partir del ID
+            const ejemploPosesion = {
                 id: parseInt(id),
                 idPersona: '123',
                 idVivienda: '456',
                 fechaPosesion: '2020-01-01'
             };
 
-            setIdPersona(ejemploGobernador.idPersona);
-            setIdVivienda(ejemploGobernador.idVivienda);
-            setFechaPosesion(ejemploGobernador.fechaPosesion);
+            setIdPersona(ejemploPosesion.idPersona);
+            setIdVivienda(ejemploPosesion.idVivienda);
+            setFechaPosesion(ejemploPosesion.fechaPosesion);
         }
     }, [id]);
 
-    const updateGobernador = (e) => {
+    const updatePosesion = (e) => {
         e.preventDefault();
 
-        const gobernador = {
+        const posesion = {
             id: parseInt(id),
             idPersona,
             idVivienda,
             fechaPosesion
         };
 
-        console.log("Actualizando gobernador:", gobernador);
-        alert("Gobernador actualizado correctamente");
+        console.log("Actualizando posesión:", posesion);
+        alert("Posesión actualizada correctamente");
 
-        navigate("/gobernadors");
+        navigate("/posesiones");
     };
 
     return (
         <div className='container'>
             <div className='row'>
                 <div className='card col-md-6 offset-md-3 offset-md-3'>
-                    <h2 className='text-center'>Actualizar Gobernador</h2>
+                    <h2 className='text-center'>Actualizar Posesión</h2>
                     <div className='card-body'>
-                        <form onSubmit={updateGobernador}>
+                        <form onSubmit={updatePosesion}>
 
                             <div className='form-group mb-2'>
                                 <label className='form-label'>ID Persona</label>
@@ -84,7 +84,7 @@ export const EditGobernadorComponent = () => {
                                 <button type="submit" className="btn btn-primary mb-2">
                                     Actualizar
                                 </button>
-                                <Link to="/gobernadors" className='btn btn-danger mb-2'>Cancelar</Link>
+                                <Link to="/posesiones" className='btn btn-danger mb-2'>Cancelar</Link>
                             </div>
 
                         </form>
@@ -95,4 +95,4 @@ export const EditGobernadorComponent = () => {
     );
 };
 
-export default EditGobernadorComponent;
+export default EditPosesionComponent;

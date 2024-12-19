@@ -13,18 +13,16 @@ import EditMunicipioComponent from './components/Municipio/EditMunicipioComponen
 import HomeComponent from './components/HomeComponent';
 import ListCDFComponent from './components/CDF/ListCDFComponent';
 import AddCDFComponent from './components/CDF/AddCDFComponent';
-//import EditCDFComponent from './components/CDF/EditCDFComponent';
+import EditCDFComponent from './components/CDF/EditCDFComponent';
 import ListGobernadorComponent from './components/Gobernador/ListGobernadorComponent';
 import AddGobernadorComponent from './components/Gobernador/AddGobernadorComponent';
-//import EditGobernadorComponent from './components/Gobernador/EditGobernadorComponent';
+import EditGobernadorComponent from './components/Gobernador/EditGobernadorComponent';
 import ListPosesionComponent from './components/Posesion/ListPosesionComponent';
 import AddPosesionComponent from './components/Posesion/AddPosesionComponent';
-//import EditPosesionesComponent from './components/Posesiones/EditPosesionesComponent';
+import EditPosesionesComponent from './components/Posesion/EditPosesionComponent';
 
 
-//<Route path='/edit-cdf/:id' element={<EditCDFComponent />}></Route>
-//<Route path='/edit-posesiones/:id' element={<EditPosesionesComponent />}></Route>
-//<Route path='/edit-gobernador/:id' element={<EditGobernadorComponent />}></Route>
+
 function App() {
 
   return (
@@ -50,7 +48,9 @@ function App() {
             <Route path='/add-gobernador' element={<AddGobernadorComponent />}></Route>
             <Route path='/posesiones' element={<ListPosesionComponent />}></Route>
             <Route path='/add-posesion' element={<AddPosesionComponent />}></Route>
-
+            <Route path='/edit-cdf/:id' element={<EditCDFComponent />}></Route>
+            <Route path='/edit-posesiones/:id' element={<EditPosesionesComponent />}></Route>
+            <Route path='/edit-gobernador/:id' element={<EditGobernadorComponent />}></Route>
           </Routes>
         </div>
       </BrowserRouter>
