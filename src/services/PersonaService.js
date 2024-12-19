@@ -23,7 +23,7 @@ class PersonaService {
         });
     }
 
-    
+
     // Actualizar una Persona existente
     updatePersona(id, persona) {
         return axios.put(`${PERSONA_BASE_RES_API_URL}/${id}`, persona, {
@@ -32,7 +32,7 @@ class PersonaService {
             }
         });
     }
-    
+
 
     // Eliminar una persona por su ID
     deletePersonaById(id) {
