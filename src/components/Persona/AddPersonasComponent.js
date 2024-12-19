@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Container, Typography, Paper, TextField, MenuItem } from '@mui/material';
 import PersonaService from '../../services/PersonaService';
+import ViviendaService from '../../services/ViviendaService';
 
 const AddPersonaComponent = () => {
     const navigate = useNavigate();
@@ -14,10 +15,14 @@ const AddPersonaComponent = () => {
         numeroDocumento: '',
         fechaNacimiento: '',
         sexo: '',
-        telefono: ''
+        telefono: '',
+        viviendaActual: {
+            id: '',
+        }
     });
 
     const [errors, setErrors] = useState({});
+    const [viviendas, setViviendas] = useState([]);
 
     // Opciones para los select de tipo de documento y sexo
     const tipoDocumentoOpciones = [
@@ -30,6 +35,17 @@ const AddPersonaComponent = () => {
         { value: 'M', label: 'Masculino' },
         { value: 'F', label: 'Femenino' }
     ];
+
+    // Obtener viviendas al cargar el componente
+    useEffect(() => {
+        ViviendaService.getAllViviendas()
+            .then((response) => {
+                setViviendas(response.data);
+            })
+            .catch((error) => {
+                console.error('Error al obtener las viviendas', error);
+            });
+    }, []);
 
     // Validar los datos antes de enviar
     const validate = () => {
@@ -56,6 +72,11 @@ const AddPersonaComponent = () => {
             newErrors.telefono = 'El teléfono solo puede contener números';
         }
 
+        // Validar vivienda
+        if (!persona.viviendaActual.id) {
+            newErrors.viviendaActual = 'Debe seleccionar una vivienda válida';
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0; // Retorna true si no hay errores
     };
@@ -69,11 +90,36 @@ const AddPersonaComponent = () => {
         setErrors({ ...errors, [name]: '' });
     };
 
+    const handleNestedChange = (e, parentKey, childKey) => {
+        const { value } = e.target;
+        setPersona({
+            ...persona,
+            [parentKey]: {
+                ...persona[parentKey],
+                [childKey]: value
+            }
+        });
+
+        setErrors({ ...errors, [parentKey]: '' });
+    };
+
     // Manejar el registro de la persona
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            PersonaService.createPersona(persona)
+            const formattedPersona = {
+                id: persona.numeroDocumento,
+                tipo_doc: tipoDocumentoOpciones.find(opt => opt.value === persona.tipoDocumento)?.label,
+                nombre: `${persona.nombre} ${persona.apellido}`,
+                sexo: persona.sexo,
+                fechaNac: `${persona.fechaNacimiento}T00:00:00`,
+                telefono: persona.telefono,
+                viviendaActual: {
+                    id: persona.viviendaActual.id
+                }
+            };
+
+            PersonaService.createPersona(formattedPersona)
                 .then(() => {
                     alert('Persona registrada correctamente');
                     navigate('/persona');
@@ -179,6 +225,23 @@ const AddPersonaComponent = () => {
                     fullWidth
                     margin="normal"
                 />
+                <TextField
+                    select
+                    label="Vivienda Actual"
+                    name="viviendaActualId"
+                    value={persona.viviendaActual.id}
+                    onChange={(e) => handleNestedChange(e, 'viviendaActual', 'id')}
+                    fullWidth
+                    margin="normal"
+                    required
+                >
+                    <MenuItem value="" disabled>Seleccione una vivienda</MenuItem>
+                    {viviendas.map((vivienda) => (
+                        <MenuItem key={vivienda.id} value={vivienda.id}>
+                            {`${vivienda.direccion} (ID: ${vivienda.id})`}
+                        </MenuItem>
+                    ))}
+                </TextField>
                 <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
                     Registrar
                 </Button>
