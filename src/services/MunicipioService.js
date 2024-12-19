@@ -19,7 +19,6 @@ class MunicipioService {
         });
     }
 
-    /*
     // Actualizar una Municipio existente
     updateMunicipio(id, municipio) {
         return axios.put(`${MUNICIPIO_BASE_RES_API_URL}/${id}`, municipio, {
@@ -32,7 +31,7 @@ class MunicipioService {
     deleteMunicipio(id){
         return axios.delete(`${MUNICIPIO_BASE_RES_API_URL}/${id}`);
     }
-        */
+        
 
 }
 

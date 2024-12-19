@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ViviendaService from '../../services/ViviendaService';
+import MunicipioService from '../../services/MunicipioService'; // Asegúrate de importar el servicio de municipios
 
 const AddViviendaComponent = () => {
     const [direccion, setDireccion] = useState('');
-    const [idMunicipio, setIdMunicipio] = useState('');
+    const [municipioNombre, setmunicipioNombre] = useState(''); // ID del municipio
     const [capacidad, setCapacidad] = useState('');
     const [niveles, setNiveles] = useState('');
+    const [municipios, setMunicipios] = useState([]); // Para almacenar la lista de municipios
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Obtener los municipios disponibles cuando se cargue el componente
+        MunicipioService.getAllMunicipios()
+            .then((response) => {
+                setMunicipios(response.data);  // Guardar la lista de municipios en el estado
+            })
+            .catch((error) => {
+                console.error("Error al cargar los municipios", error);
+                alert("Hubo un error al cargar los municipios.");
+            });
+    }, []);
 
     const saveVivienda = (e) => {
         e.preventDefault();
@@ -18,8 +32,8 @@ const AddViviendaComponent = () => {
             return;
         }
 
-        if (!idMunicipio || idMunicipio < 0) {
-            alert('El ID del municipio no puede estar vacío o ser negativo.');
+        if (!municipioNombre) {
+            alert('Debes seleccionar un municipio.');
             return;
         }
 
@@ -35,9 +49,9 @@ const AddViviendaComponent = () => {
 
         const vivienda = {
             direccion,
-            idMunicipio: parseInt(idMunicipio),
             capacidad: parseInt(capacidad),
             niveles: parseInt(niveles),
+            municipioNombre: municipioNombre,
         };
 
         // Llamada al servicio para crear la vivienda
@@ -48,66 +62,72 @@ const AddViviendaComponent = () => {
             })
             .catch((error) => {
                 console.error('Error al registrar la vivienda', error);
-                alert('Hubo un error al registrar la vivienda. Inténtelo de nuevo.');
+                alert('Hubo un error al registrar la vivienda. Inténtalo de nuevo.');
             });
     };
 
     return (
-        <div className='container'>
-            <div className='row'>
-                <div className='card col-md-6 offset-md-3 offset-md-3'>
-                    <h2 className='text-center'>Registrar Vivienda</h2>
-                    <div className='card-body'>
+        <div className="container">
+            <div className="row">
+                <div className="card col-md-6 offset-md-3 offset-md-3">
+                    <h2 className="text-center">Registrar Vivienda</h2>
+                    <div className="card-body">
                         <form onSubmit={saveVivienda}>
-                            <div className='form-group mb-2'>
-                                <label className='form-label'>Dirección</label>
+                            <div className="form-group mb-2">
+                                <label className="form-label">Dirección</label>
                                 <input
-                                    type='text'
-                                    placeholder='Ingrese la dirección'
-                                    className='form-control'
+                                    type="text"
+                                    placeholder="Ingrese la dirección"
+                                    className="form-control"
                                     value={direccion}
                                     onChange={(e) => setDireccion(e.target.value)}
                                 />
                             </div>
 
-                            <div className='form-group mb-2'>
-                                <label className='form-label'>ID del Municipio</label>
-                                <input
-                                    type='number'
-                                    placeholder='Ingrese el ID del municipio'
-                                    className='form-control'
-                                    value={idMunicipio}
-                                    onChange={(e) => setIdMunicipio(e.target.value)}
-                                />
+                            <div className="form-group mb-2">
+                                <label className="form-label">Municipio</label>
+                                <select
+                                    className="form-control"
+                                    value={municipioNombre}
+                                    onChange={(e) => setmunicipioNombre(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Seleccionar Municipio</option>
+                                    {municipios.map((municipio) => (
+                                        <option key={municipio.id} value={municipio.id}>
+                                            {municipio.nombre}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
-                            <div className='form-group mb-2'>
-                                <label className='form-label'>Capacidad</label>
+                            <div className="form-group mb-2">
+                                <label className="form-label">Capacidad</label>
                                 <input
-                                    type='number'
-                                    placeholder='Ingrese la capacidad'
-                                    className='form-control'
+                                    type="number"
+                                    placeholder="Ingrese la capacidad"
+                                    className="form-control"
                                     value={capacidad}
                                     onChange={(e) => setCapacidad(e.target.value)}
                                 />
                             </div>
 
-                            <div className='form-group mb-2'>
-                                <label className='form-label'>Niveles</label>
+                            <div className="form-group mb-2">
+                                <label className="form-label">Niveles</label>
                                 <input
-                                    type='number'
-                                    placeholder='Ingrese el número de niveles'
-                                    className='form-control'
+                                    type="number"
+                                    placeholder="Ingrese el número de niveles"
+                                    className="form-control"
                                     value={niveles}
                                     onChange={(e) => setNiveles(e.target.value)}
                                 />
                             </div>
 
-                            <div className='botones'>
-                                <button type='submit' className='btn btn-primary mb-2'>
+                            <div className="botones">
+                                <button type="submit" className="btn btn-primary mb-2">
                                     Registrar
                                 </button>
-                                <Link to='/vivienda' className='btn btn-danger mb-2'>
+                                <Link to="/vivienda" className="btn btn-danger mb-2">
                                     Cancelar
                                 </Link>
                             </div>
@@ -115,20 +135,6 @@ const AddViviendaComponent = () => {
                     </div>
                 </div>
             </div>
-
-            <style>
-                {`
-                    input[type="number"]::-webkit-outer-spin-button,
-                    input[type="number"]::-webkit-inner-spin-button {
-                        -webkit-appearance: none;
-                        margin: 0;
-                    }
-
-                    input[type="number"] {
-                        -moz-appearance: textfield;
-                    }
-                `}
-            </style>
         </div>
     );
 };

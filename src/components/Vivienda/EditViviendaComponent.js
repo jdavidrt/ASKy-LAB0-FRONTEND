@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { TextField, Button, Paper, Typography, Container } from '@mui/material';
+import { TextField, Button, Paper, Typography, Container, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import ViviendaService from '../../services/ViviendaService';
+import MunicipioService from '../../services/MunicipioService';
 
 const EditViviendaComponent = () => {
     const { id } = useParams(); // Obtener el ID desde la URL
@@ -9,21 +10,38 @@ const EditViviendaComponent = () => {
 
     const [vivienda, setVivienda] = useState({
         direccion: '',
-        idMunicipio: '',
         capacidad: '',
-        niveles: ''
+        niveles: '',
+        municipio: { id: '', nombre: '' } // Asegurarnos de que municipio sea un objeto con id y nombre vacíos al inicio
     });
 
+    const [municipios, setMunicipios] = useState([]); // Estado para almacenar la lista de municipios
     const [errors, setErrors] = useState({});
 
     // Cargar los datos de la vivienda al montar el componente
     useEffect(() => {
+        // Cargar los datos de la vivienda
         ViviendaService.getViviendaById(id)
             .then((response) => {
-                setVivienda(response.data);
+                const viviendaData = response.data;
+                // Verificar que viviendaData.municipio no esté undefined antes de asignar
+                const municipio = viviendaData.municipio ? viviendaData.municipio : { id: '', nombre: '' };
+                setVivienda({
+                    ...viviendaData,
+                    municipio // Asegurarse de que municipio está correctamente asignado
+                });
             })
             .catch((error) => {
                 console.error('Error al obtener la vivienda:', error);
+            });
+
+        // Cargar la lista de municipios
+        MunicipioService.getAllMunicipios()
+            .then((response) => {
+                setMunicipios(response.data);
+            })
+            .catch((error) => {
+                console.error('Error al obtener los municipios:', error);
             });
     }, [id]);
 
@@ -33,11 +51,21 @@ const EditViviendaComponent = () => {
         setVivienda({ ...vivienda, [name]: value });
     };
 
+    // Manejar el cambio en el municipio
+    const handleMunicipioChange = (e) => {
+        const { value } = e.target;
+        const selectedMunicipio = municipios.find(m => m.id === parseInt(value)); // Buscar el municipio por su id
+        setVivienda({
+            ...vivienda,
+            municipio: selectedMunicipio || { id: '', nombre: '' } // Si no se encuentra, mantener un objeto vacío por defecto
+        });
+    };
+
     // Validar formulario
     const validateForm = () => {
         const newErrors = {};
         if (!vivienda.direccion) newErrors.direccion = 'La dirección es obligatoria';
-        if (!vivienda.idMunicipio) newErrors.idMunicipio = 'El ID del municipio es obligatorio';
+        if (!vivienda.municipio.id) newErrors.municipio = 'El municipio es obligatorio';
         if (!vivienda.capacidad || vivienda.capacidad <= 0)
             newErrors.capacidad = 'La capacidad debe ser un número positivo';
         if (!vivienda.niveles || vivienda.niveles <= 0)
@@ -51,7 +79,18 @@ const EditViviendaComponent = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            ViviendaService.updateVivienda(id, vivienda)
+            const updatedVivienda = {
+                id: vivienda.id,  // Mantener el id de la vivienda
+                direccion: vivienda.direccion,
+                capacidad: parseInt(vivienda.capacidad),
+                niveles: parseInt(vivienda.niveles),
+                municipio: {
+                    id: vivienda.municipio.id, // Asegúrate de que municipio tenga id
+                    nombre: vivienda.municipio.nombre
+                }
+            };
+
+            ViviendaService.updateVivienda(id, updatedVivienda)
                 .then(() => {
                     alert('¡Vivienda actualizada con éxito!');
                     navigate('/vivienda'); // Redirigir a la lista de viviendas
@@ -80,17 +119,21 @@ const EditViviendaComponent = () => {
                         error={!!errors.direccion}
                         helperText={errors.direccion}
                     />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="ID del Municipio"
-                        name="idMunicipio"
-                        type="number"
-                        value={vivienda.idMunicipio}
-                        onChange={handleChange}
-                        error={!!errors.idMunicipio}
-                        helperText={errors.idMunicipio}
-                    />
+                    <FormControl fullWidth margin="normal" error={!!errors.municipio} >
+                        <InputLabel>Municipio</InputLabel>
+                        <Select
+                            name="municipio"
+                            value={vivienda.municipio.id || ''} // Asegurarse de que municipio.id siempre sea accesible
+                            onChange={handleMunicipioChange}
+                        >
+                            {municipios.map((municipio) => (
+                                <MenuItem key={municipio.id} value={municipio.id}>
+                                    {municipio.nombre}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {errors.municipio && <span>{errors.municipio}</span>}
+                    </FormControl>
                     <TextField
                         fullWidth
                         margin="normal"

@@ -44,8 +44,8 @@ const ListViviendasComponent = () => {
         setFilteredViviendas(
             viviendas.filter(
                 (vivienda) =>
-                    vivienda.direccion.toLowerCase().includes(term) ||
-                    vivienda.idMunicipio.toString().includes(term)
+                    (vivienda.direccion && vivienda.direccion.toLowerCase().includes(term)) ||
+                    (vivienda.municipioNombre && vivienda.municipioNombre.toLowerCase().includes(term))
             )
         );
         setPage(0); // Reiniciar la página al buscar
@@ -96,7 +96,7 @@ const ListViviendasComponent = () => {
                     fullWidth
                 />
                 <Typography variant="body2" color="textSecondary" style={{ marginTop: '8px' }}>
-                    Puedes buscar por <b>dirección</b> o <b>ID del municipio</b>.
+                    Puedes buscar por <b>dirección</b> o <b>municipio</b>.
                 </Typography>
             </div>
 
@@ -112,7 +112,7 @@ const ListViviendasComponent = () => {
                         <TableRow>
                             <TableCell>ID</TableCell>
                             <TableCell>Dirección</TableCell>
-                            <TableCell>ID del Municipio</TableCell>
+                            <TableCell>Municipio</TableCell>
                             <TableCell>Capacidad (Personas)</TableCell>
                             <TableCell>Niveles</TableCell>
                             <TableCell>Acciones</TableCell>
@@ -125,7 +125,7 @@ const ListViviendasComponent = () => {
                                 <TableRow key={vivienda.id}>
                                     <TableCell>{vivienda.id}</TableCell>
                                     <TableCell>{vivienda.direccion}</TableCell>
-                                    <TableCell>{vivienda.idMunicipio}</TableCell>
+                                    <TableCell>{vivienda.municipioNombre}</TableCell>
                                     <TableCell>{vivienda.capacidad}</TableCell>
                                     <TableCell>{vivienda.niveles}</TableCell>
                                     <TableCell>
