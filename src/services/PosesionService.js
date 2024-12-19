@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const POSESION_BASE_RES_API_URL = "http://localhost:8080/api/Posesions"
+const POSESION_BASE_RES_API_URL = "https://crud-municipios-production.up.railway.app/api/Posesions"
 
 class PosesionService {
     getAllPosesions() {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const MUNICIPIO_BASE_RES_API_URL = "http://localhost:8080/api/municipios"
+const MUNICIPIO_BASE_RES_API_URL = "https://crud-municipios-production.up.railway.app/api/municipios"
 
 class MunicipioService {
     getAllMunicipios() {

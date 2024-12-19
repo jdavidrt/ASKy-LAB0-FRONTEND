@@ -113,10 +113,10 @@ const AddPersonaComponent = () => {
                 'Tarjeta de Identidad': 'TI',
                 'Cédula de Extranjería': 'CE'
             };
-    
+
             // Buscar el tipo de documento correspondiente
             const tipoDocumento = tipoDocumentoMap[tipoDocumentoOpciones.find(opt => opt.value === persona.tipoDocumento)?.label] || persona.tipoDocumento;
-    
+
             const formattedPersona = {
                 id: parseInt(persona.numeroDocumento, 10), // Convertir el número de documento a un entero
                 tipo_doc: tipoDocumento, // Asignar el tipo de documento mapeado
@@ -128,7 +128,7 @@ const AddPersonaComponent = () => {
                     id: parseInt(persona.viviendaActual.id, 10) // Convertir el id de vivienda a un entero
                 }
             };
-    
+
             PersonaService.createPersona(formattedPersona)
                 .then(() => {
                     alert('Persona registrada correctamente');

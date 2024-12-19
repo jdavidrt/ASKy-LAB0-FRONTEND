@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const VIVIENDA_BASE_RES_API_URL = "http://localhost:8080/api/viviendas";
+const VIVIENDA_BASE_RES_API_URL = "https://crud-municipios-production.up.railway.app/api/viviendas";
 
 class ViviendaService {
     // Obtener todas las viviendas
@@ -30,7 +30,7 @@ class ViviendaService {
             }
         });
     }
-   
+
     // Eliminar una vivienda por su ID
     deleteViviendaById(id) {
         return axios.delete(`${VIVIENDA_BASE_RES_API_URL}/${id}`);

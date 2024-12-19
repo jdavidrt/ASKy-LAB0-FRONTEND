@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const CDF_BASE_RES_API_URL = "http://localhost:8080/api/cdfs"
+const CDF_BASE_RES_API_URL = "https://crud-municipios-production.up.railway.app/api/cdfs"
 
 class CDFService {
     getAllCDFs() {
