@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useNavigate } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Button,
@@ -20,6 +20,7 @@ const ListPosesionComponent = () => {
     const [filteredPosesiones, setFilteredPosesiones] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
     const ejemploPosesiones = [
@@ -108,7 +109,7 @@ const ListPosesionComponent = () => {
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar posesión con ID: ${posesion.id}`)}
+                                            onClick={() => navigate(`/edit-posesion/${posesion.id}`)}
                                         >
                                             Editar
                                         </Button>

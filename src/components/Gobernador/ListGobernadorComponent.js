@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useNavigate } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Button,
@@ -20,6 +20,7 @@ const ListGobernadorComponent = () => {
     const [filteredGobernadores, setFilteredGobernadores] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
     const ejemploGobernadores = [
@@ -109,7 +110,7 @@ const ListGobernadorComponent = () => {
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar gobernador con ID: ${gobernador.id}`)}
+                                            onClick={() => navigate(`/edit-gobernador/${gobernador.id}`)}
                                         >
                                             Editar
                                         </Button>

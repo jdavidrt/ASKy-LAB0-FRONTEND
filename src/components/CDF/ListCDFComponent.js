@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useNavigate } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Button,
@@ -20,6 +20,7 @@ const ListCDFComponent = () => {
     const [filteredCdfs, setFilteredCdfs] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const navigate = useNavigate();
 
     // Datos de ejemplo
     const ejemploCdfs = [
@@ -105,7 +106,7 @@ const ListCDFComponent = () => {
                                             color="primary"
                                             size="small"
                                             style={{ marginRight: '10px' }}
-                                            onClick={() => alert(`Editar CDF con ID: ${cdf.id}`)}
+                                            onClick={() => navigate(`/edit-cdf/${cdf.id}`)}
                                         >
                                             Editar
                                         </Button>
