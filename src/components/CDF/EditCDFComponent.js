@@ -30,7 +30,7 @@ const EditCDFComponent = () => {
                 .catch((error) => {
                     console.error('Error al cargar el CDF:', error);
                     alert('No se pudo cargar el CDF');
-                    navigate('/cdfs');
+                    navigate('/cdf');
                 });
         }
     }, [id, navigate]);
